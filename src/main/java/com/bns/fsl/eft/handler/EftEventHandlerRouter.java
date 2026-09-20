@@ -25,17 +25,17 @@ public class EftEventHandlerRouter {
     }
 
     public EftTransactionContext route(EftTransactionContext context) {
-        if (context.eventAction() == null || context.eventAction().isBlank()) {
+        String eventAction = context.getEventAction();
+        if (eventAction == null || eventAction.isBlank()) {
             throw new IllegalArgumentException("metadata.event_action is missing");
         }
 
         final EftEventAction action;
         try {
-            action = EftEventAction.valueOf(
-                    context.eventAction().trim().toUpperCase(Locale.ROOT));
+            action = EftEventAction.valueOf(eventAction.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException(
-                    "Unsupported metadata.event_action: " + context.eventAction(), exception);
+                    "Unsupported metadata.event_action: " + eventAction, exception);
         }
 
         EftEventHandler handler = handlers.get(action);
