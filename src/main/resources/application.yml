@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: fsl-rtp-eft-service
+  batch:
+    job:
+      enabled: false
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+
+eft:
+  batch:
+    decision-reconciliation:
+      cron: "${EFT_BATCH_CRON:0 */5 * * * *}"
+      batch-size: ${EFT_BATCH_SIZE:500}
+      auto-approval-timeout: ${EFT_AUTO_APPROVAL_TIMEOUT:PT4H}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
