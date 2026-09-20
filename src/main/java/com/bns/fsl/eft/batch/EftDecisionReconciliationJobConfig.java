@@ -1,7 +1,6 @@
 package com.bns.fsl.eft.batch;
 
 import com.bns.fsl.eft.batch.processor.EftDecisionItemProcessor;
-import com.bns.fsl.eft.batch.reader.EftDecisionItemReader;
 import com.bns.fsl.eft.batch.writer.EftDecisionItemWriter;
 import com.bns.fsl.eft.model.EftDecisionResult;
 import com.bns.fsl.eft.model.PendingEftDecisionProjection;
@@ -12,6 +11,7 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +29,7 @@ public class EftDecisionReconciliationJobConfig {
     ItemReader<PendingEftDecisionProjection> eftDecisionItemReader(
             IncomingPaymentStatusRepository repository,
             EftDecisionBatchProperties properties) {
-        return new EftDecisionItemReader(() -> repository.findPendingRecords(properties.batchSize()));
+        return new ListItemReader<>(repository.findPendingRecords(properties.batchSize()));
     }
 
     @Bean
