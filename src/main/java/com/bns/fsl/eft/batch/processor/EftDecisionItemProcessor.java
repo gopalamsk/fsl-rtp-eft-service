@@ -1,6 +1,7 @@
 package com.bns.fsl.eft.batch.processor;
 
 import com.bns.fsl.eft.batch.EftDecisionBatchProperties;
+import com.bns.fsl.eft.batch.exception.EftInvalidBatchItemException;
 import com.bns.fsl.eft.constants.EftProcessingStatus;
 import com.bns.fsl.eft.model.EftDecisionResult;
 import com.bns.fsl.eft.model.PendingEftDecisionProjection;
@@ -28,6 +29,8 @@ public class EftDecisionItemProcessor
 
     @Override
     public EftDecisionResult process(PendingEftDecisionProjection item) {
+        validate(item);
+
         if (item.getFraudDecision() != null && !item.getFraudDecision().isBlank()) {
             return new EftDecisionResult(
                     item, EftProcessingStatus.RESPONDED, item.getFraudDecision(), false);
@@ -39,8 +42,24 @@ public class EftDecisionItemProcessor
                     item, EftProcessingStatus.AUTO_APPROVED, "APPROVED", true);
         }
 
-        // Spring Batch uses null from ItemProcessor as an intentional filter:
-        // this PENDING item is not ready for terminal processing in this execution.
         return null;
+    }
+
+    private static void validate(PendingEftDecisionProjection item) {
+        if (item == null) {
+            throw new EftInvalidBatchItemException(null, "Pending EFT decision item is null");
+        }
+        if (item.getRequestId() == null) {
+            throw new EftInvalidBatchItemException(null, "requestId is required");
+        }
+        if (item.getCreatedTs() == null) {
+            throw new EftInvalidBatchItemException(item.getRequestId(), "createdTs is required");
+        }
+        if (item.getRequestSystem() == null || item.getRequestSystem().isBlank()) {
+            throw new EftInvalidBatchItemException(item.getRequestId(), "requestSystem is required");
+        }
+        if (item.getOriginalRequest() == null || item.getOriginalRequest().isBlank()) {
+            throw new EftInvalidBatchItemException(item.getRequestId(), "originalRequest is required");
+        }
     }
 }
