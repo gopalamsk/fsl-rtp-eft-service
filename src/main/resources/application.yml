@@ -15,6 +15,8 @@ eft:
       cron: "${EFT_BATCH_CRON:0 */5 * * * *}"
       batch-size: ${EFT_BATCH_SIZE:500}
       auto-approval-timeout: ${EFT_AUTO_APPROVAL_TIMEOUT:PT4H}
+      transaction-timeout: ${EFT_BATCH_TRANSACTION_TIMEOUT:PT30S}
+      skip-limit: ${EFT_BATCH_SKIP_LIMIT:10}
 
 management:
   endpoints:
