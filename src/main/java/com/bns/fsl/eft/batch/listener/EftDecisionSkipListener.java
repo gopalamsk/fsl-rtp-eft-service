@@ -1,7 +1,7 @@
 package com.bns.fsl.eft.batch.listener;
 
-import com.bns.fsl.eft.model.EftDecisionResult;
-import com.bns.fsl.eft.model.PendingEftDecisionProjection;
+import com.bns.fsl.eft.batch.model.EftDecisionResult;
+import com.bns.fsl.eft.batch.model.PendingEftDecisionProjection;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.slf4j.Logger;
@@ -20,18 +20,16 @@ public class EftDecisionSkipListener
     private final Counter writeSkipCounter;
 
     public EftDecisionSkipListener(MeterRegistry meterRegistry) {
-        this.readSkipCounter = Counter.builder("eft.batch.decision.skipped")
+        this.readSkipCounter = counter(meterRegistry, "read");
+        this.processSkipCounter = counter(meterRegistry, "process");
+        this.writeSkipCounter = counter(meterRegistry, "write");
+    }
+
+    private static Counter counter(MeterRegistry registry, String phase) {
+        return Counter.builder("eft.batch.decision.skipped")
                 .description("EFT decision reconciliation items skipped by Spring Batch")
-                .tag("phase", "read")
-                .register(meterRegistry);
-        this.processSkipCounter = Counter.builder("eft.batch.decision.skipped")
-                .description("EFT decision reconciliation items skipped by Spring Batch")
-                .tag("phase", "process")
-                .register(meterRegistry);
-        this.writeSkipCounter = Counter.builder("eft.batch.decision.skipped")
-                .description("EFT decision reconciliation items skipped by Spring Batch")
-                .tag("phase", "write")
-                .register(meterRegistry);
+                .tag("phase", phase)
+                .register(registry);
     }
 
     @Override
@@ -43,21 +41,14 @@ public class EftDecisionSkipListener
     @Override
     public void onSkipInProcess(PendingEftDecisionProjection item, Throwable throwable) {
         processSkipCounter.increment();
-        LOGGER.error(
-                "Skipped EFT reconciliation item during processing. requestId={}",
-                item == null ? null : item.getRequestId(),
-                throwable);
+        LOGGER.error("Skipped EFT reconciliation item during processing. requestId={}",
+                item == null ? null : item.getRequestId(), throwable);
     }
 
     @Override
     public void onSkipInWrite(EftDecisionResult item, Throwable throwable) {
         writeSkipCounter.increment();
-        Long requestId = item == null || item.source() == null
-                ? null
-                : item.source().getRequestId();
-        LOGGER.error(
-                "Skipped EFT reconciliation item during write. requestId={}",
-                requestId,
-                throwable);
+        Long requestId = item == null || item.source() == null ? null : item.source().getRequestId();
+        LOGGER.error("Skipped EFT reconciliation item during write. requestId={}", requestId, throwable);
     }
 }
