@@ -12,11 +12,21 @@ import java.time.Duration;
 public record EftDecisionBatchProperties(
         @Min(1) int batchSize,
         @NotNull Duration autoApprovalTimeout,
-        @NotNull Duration transactionTimeout) {
+        @NotNull Duration transactionTimeout,
+        @Min(1) int skipLimit) {
 
     public EftDecisionBatchProperties {
-        if (batchSize == 0) batchSize = 500;
-        if (autoApprovalTimeout == null) autoApprovalTimeout = Duration.ofHours(4);
-        if (transactionTimeout == null) transactionTimeout = Duration.ofSeconds(30);
+        if (batchSize == 0) {
+            batchSize = 500;
+        }
+        if (autoApprovalTimeout == null) {
+            autoApprovalTimeout = Duration.ofHours(4);
+        }
+        if (transactionTimeout == null) {
+            transactionTimeout = Duration.ofSeconds(30);
+        }
+        if (skipLimit == 0) {
+            skipLimit = 10;
+        }
     }
 }
