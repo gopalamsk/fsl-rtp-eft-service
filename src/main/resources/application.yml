@@ -11,7 +11,7 @@ spring:
 
 eft:
   batch:
-    decision-reconciliation:
+    pending-decision:
       cron: "${EFT_BATCH_CRON:0 */5 * * * *}"
       batch-size: ${EFT_BATCH_SIZE:500}
       auto-approval-timeout: ${EFT_AUTO_APPROVAL_TIMEOUT:PT4H}
