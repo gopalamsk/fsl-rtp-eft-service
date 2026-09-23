@@ -1,6 +1,6 @@
 package com.bns.fsl.eft.batch.writer;
 
-import com.bns.fsl.eft.model.EftDecisionResult;
+import com.bns.fsl.eft.batch.model.EftDecisionResult;
 import com.bns.fsl.eft.repository.IncomingPaymentStatusRepository;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -22,7 +22,7 @@ public class EftDecisionItemWriter implements ItemWriter<EftDecisionResult> {
     @Override
     public void write(Chunk<? extends EftDecisionResult> chunk) {
         for (EftDecisionResult result : chunk) {
-            int inserted = repository.insertTerminalStatusIfAbsent(
+            repository.insertTerminalStatusIfAbsent(
                     result.source().getRequestId(),
                     result.source().getRequestSystem(),
                     result.terminalStatus(),
@@ -30,14 +30,6 @@ public class EftDecisionItemWriter implements ItemWriter<EftDecisionResult> {
                     result.source().getOriginalRequest(),
                     Instant.now(),
                     UPDATED_BY);
-
-            if (inserted == 0) {
-                // Idempotent replay: another committed terminal state already exists.
-                continue;
-            }
-
-            // PHUB/NRT/FOD outbox rows belong in this same DB transaction.
-            // They are added once the exact existing outbound contracts/table are supplied.
         }
     }
 }
