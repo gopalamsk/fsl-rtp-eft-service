@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import java.time.Duration;
 
 @Validated
-@ConfigurationProperties(prefix = "eft.batch.decision-reconciliation")
+@ConfigurationProperties(prefix = "eft.batch.pending-decision")
 public record EftDecisionBatchProperties(
         @Min(1) int batchSize,
         @NotNull Duration autoApprovalTimeout,
