@@ -1,10 +1,10 @@
 package com.bns.fsl.eft.batch.processor;
 
-import com.bns.fsl.eft.batch.EftDecisionBatchProperties;
+import com.bns.fsl.eft.batch.config.EftDecisionBatchProperties;
 import com.bns.fsl.eft.batch.exception.EftInvalidBatchItemException;
+import com.bns.fsl.eft.batch.model.EftDecisionResult;
+import com.bns.fsl.eft.batch.model.PendingEftDecisionProjection;
 import com.bns.fsl.eft.constants.EftProcessingStatus;
-import com.bns.fsl.eft.model.EftDecisionResult;
-import com.bns.fsl.eft.model.PendingEftDecisionProjection;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
@@ -46,20 +46,12 @@ public class EftDecisionItemProcessor
     }
 
     private static void validate(PendingEftDecisionProjection item) {
-        if (item == null) {
-            throw new EftInvalidBatchItemException(null, "Pending EFT decision item is null");
-        }
-        if (item.getRequestId() == null) {
-            throw new EftInvalidBatchItemException(null, "requestId is required");
-        }
-        if (item.getCreatedTs() == null) {
-            throw new EftInvalidBatchItemException(item.getRequestId(), "createdTs is required");
-        }
-        if (item.getRequestSystem() == null || item.getRequestSystem().isBlank()) {
+        if (item == null) throw new EftInvalidBatchItemException(null, "Pending EFT decision item is null");
+        if (item.getRequestId() == null) throw new EftInvalidBatchItemException(null, "requestId is required");
+        if (item.getCreatedTs() == null) throw new EftInvalidBatchItemException(item.getRequestId(), "createdTs is required");
+        if (item.getRequestSystem() == null || item.getRequestSystem().isBlank())
             throw new EftInvalidBatchItemException(item.getRequestId(), "requestSystem is required");
-        }
-        if (item.getOriginalRequest() == null || item.getOriginalRequest().isBlank()) {
+        if (item.getOriginalRequest() == null || item.getOriginalRequest().isBlank())
             throw new EftInvalidBatchItemException(item.getRequestId(), "originalRequest is required");
-        }
     }
 }
