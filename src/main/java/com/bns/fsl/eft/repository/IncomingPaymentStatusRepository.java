@@ -1,6 +1,6 @@
 package com.bns.fsl.eft.repository;
 
-import com.bns.fsl.eft.model.PendingEftDecisionProjection;
+import com.bns.fsl.eft.batch.model.PendingEftDecisionProjection;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
