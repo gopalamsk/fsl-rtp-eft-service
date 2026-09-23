@@ -1,5 +1,7 @@
 package com.bns.fsl.eft.batch;
 
+import com.bns.fsl.eft.batch.exception.EftInvalidBatchItemException;
+import com.bns.fsl.eft.batch.listener.EftDecisionSkipListener;
 import com.bns.fsl.eft.batch.processor.EftDecisionItemProcessor;
 import com.bns.fsl.eft.batch.writer.EftDecisionItemWriter;
 import com.bns.fsl.eft.model.EftDecisionResult;
@@ -39,17 +41,22 @@ public class EftDecisionReconciliationJobConfig {
             ItemReader<PendingEftDecisionProjection> eftDecisionItemReader,
             EftDecisionItemProcessor processor,
             EftDecisionItemWriter writer,
+            EftDecisionSkipListener skipListener,
             EftDecisionBatchProperties properties) {
 
-        DefaultTransactionAttribute tx = new DefaultTransactionAttribute();
-        tx.setTimeout((int) properties.transactionTimeout().toSeconds());
+        DefaultTransactionAttribute transactionAttribute = new DefaultTransactionAttribute();
+        transactionAttribute.setTimeout((int) properties.transactionTimeout().toSeconds());
 
         return new StepBuilder("eftDecisionReconciliationStep", jobRepository)
                 .<PendingEftDecisionProjection, EftDecisionResult>chunk(1, transactionManager)
                 .reader(eftDecisionItemReader)
                 .processor(processor)
                 .writer(writer)
-                .transactionAttribute(tx)
+                .faultTolerant()
+                .skip(EftInvalidBatchItemException.class)
+                .skipLimit(properties.skipLimit())
+                .listener(skipListener)
+                .transactionAttribute(transactionAttribute)
                 .build();
     }
 
