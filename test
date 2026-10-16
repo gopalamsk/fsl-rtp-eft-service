@@ -1,0 +1,1 @@
+Introduce a new Fraud Service Layer (FSL) microservice to enable real-time fraud screening for EFT payments. The service will consume payment requests from Kafka, integrate with ACI PRM for fraud decisioning, and return fraud outcomes to PHUB before payment submission, with support for transaction tracking, auditability, and timeout handling.
