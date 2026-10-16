@@ -1,0 +1,41 @@
+Yes. QA should start as soon as the RT happy path is deployed and stable in IST. There is no reason to wait until all EFT flows are developed.
+
+My previous timeline unnecessarily delayed QA. For your EFT service, we should follow incremental development and parallel QA testing.
+
+Revised EFT delivery plan
+
+#	High-level task	Timeline	Owner
+1	RT happy path: mapping, Kafka consumer, MQ integration, FOD audit	Oct 13–20	Dev
+2	RT happy-path IST deployment and QA functional testing	Oct 21–30	Dev + QA
+3	Pending decision flow: batch polling, decision handling and PHUB response	Oct 21–Nov 4	Dev
+4	Timeout and auto-approval flow, retry and duplicate handling	Nov 2–11	Dev
+5	Pending and timeout flow QA, including regression	Nov 5–18	QA
+6	FILE_UPLOAD NRT development, mapping and MQ integration	Nov 9–18	Dev
+7	FILE_UPLOAD NRT QA, unit test completion and integration fixes	Nov 19–27	Dev + QA
+8	End-to-end regression, UAT deployment and handover	Nov 23–Dec 1	Dev + QA
+9	UAT sign-off, defect closure and production readiness	Dec 2–23	QA + Backup Dev
+10	Production deployment and smoke testing	Jan 5, 2027	Release Team + Dev
+
+These are proposed dates, assuming the required database tables, MQ connectivity and IST dependencies are available.
+
+How development and QA overlap
+
+October to January delivery schedule
+
+Development / release
+
+QA / validation
+
+Recommended testing approach
+
+* October 21: QA begins RT happy-path testing while you develop the pending decision flow.
+* November 5: QA starts pending/timeout testing while you continue NRT development.
+* November 19: QA begins NRT testing while you fix defects and complete unit/integration tests.
+* November 23: End-to-end regression begins, followed by UAT preparation.
+* December: QA and a designated backup developer handle UAT and defects during your vacation.
+
+Unit tests should be written alongside each development task, not postponed until the end.
+
+One important dependency: If the pending and timeout paths are part of the same batch processor, they can share implementation work, but QA should still have separate test coverage for each decision outcome.
+
+For your scrum master, I recommend presenting these as 10 Jira tasks under one EFT delivery epic, with parallel Dev and QA ownership. Your key milestone should be November 27 for development and IST QA completion, followed by UAT handover before December 2.

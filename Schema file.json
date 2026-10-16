@@ -1,0 +1,508 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "EftFraudPaymentRequest",
+  "version": "1.0.5",
+  "title": "EftFraudPaymentRequest",
+  "javaType": "com.bns.fsl.eft.EftFraudPaymentRequest",
+  "description": "FSL Incoming Payment Events Schema for EFT",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metadata",
+    "payments"
+  ],
+  "definitions": {
+    "PostalAddress": {
+      "type": "object",
+      "properties": {
+        "address_line1": {
+          "type": "string"
+        },
+        "address_line": {
+          "type": "string"
+        },
+        "town_name": {
+          "type": "string"
+        },
+        "country_sub_division": {
+          "type": "string"
+        },
+        "post_code": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "IdentificationOther": {
+      "type": "object",
+      "properties": {
+        "identification": {
+          "type": "string"
+        }
+      }
+    },
+    "AccountIdentification": {
+      "type": "object",
+      "properties": {
+        "other": {
+          "$ref": "#/definitions/IdentificationOther"
+        }
+      }
+    },
+    "FinancialInstitutionIdentification": {
+      "type": "object",
+      "properties": {
+        "branch_identification": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "InstructedAmount": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        }
+      }
+    },
+    "Amount": {
+      "type": "object",
+      "properties": {
+        "instructed_amount": {
+          "$ref": "#/definitions/InstructedAmount"
+        }
+      }
+    },
+    "CategoryPurpose": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "PaymentTypeInformation": {
+      "type": "object",
+      "properties": {
+        "category_purpose": {
+          "$ref": "#/definitions/CategoryPurpose"
+        }
+      }
+    },
+    "Purpose": {
+      "type": "object",
+      "properties": {
+        "proprietary": {
+          "type": "string"
+        }
+      }
+    },
+    "DebtorParty": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "postal_address": {
+          "$ref": "#/definitions/PostalAddress"
+        }
+      }
+    },
+    "Debtor": {
+      "type": "object",
+      "properties": {
+        "party": {
+          "$ref": "#/definitions/DebtorParty"
+        }
+      }
+    },
+    "DebtorAccountType": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "DebtorAccount": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/DebtorAccountType"
+        },
+        "identification": {
+          "$ref": "#/definitions/AccountIdentification"
+        }
+      }
+    },
+    "DebtorAgent": {
+      "type": "object",
+      "properties": {
+        "financial_institution_identification": {
+          "$ref": "#/definitions/FinancialInstitutionIdentification"
+        },
+        "postal_address": {
+          "$ref": "#/definitions/PostalAddress"
+        }
+      }
+    },
+    "OrganisationIdentificationOther": {
+      "type": "object",
+      "properties": {
+        "identification": {
+          "type": "string"
+        }
+      }
+    },
+    "OrganisationIdentification": {
+      "type": "object",
+      "properties": {
+        "other": {
+          "$ref": "#/definitions/OrganisationIdentificationOther"
+        }
+      }
+    },
+    "CreditorPartyIdentification": {
+      "type": "object",
+      "properties": {
+        "organisation_identification": {
+          "$ref": "#/definitions/OrganisationIdentification"
+        }
+      }
+    },
+    "CreditorParty": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "identification": {
+          "$ref": "#/definitions/CreditorPartyIdentification"
+        },
+        "postal_address": {
+          "$ref": "#/definitions/PostalAddress"
+        }
+      }
+    },
+    "Creditor": {
+      "type": "object",
+      "properties": {
+        "party": {
+          "$ref": "#/definitions/CreditorParty"
+        }
+      }
+    },
+    "CreditorAccount": {
+      "type": "object",
+      "properties": {
+        "identification": {
+          "$ref": "#/definitions/AccountIdentification"
+        },
+        "currency": {
+          "type": "string"
+        }
+      }
+    },
+    "CreditorAgent": {
+      "type": "object",
+      "properties": {
+        "financial_institution_identification": {
+          "$ref": "#/definitions/FinancialInstitutionIdentification"
+        },
+        "postal_address": {
+          "$ref": "#/definitions/PostalAddress"
+        }
+      }
+    },
+    "RemittanceInformation": {
+      "type": "object",
+      "properties": {
+        "unstructured_remittance_information1": {
+          "type": "string"
+        },
+        "unstructured_remittance_information2": {
+          "type": "string"
+        }
+      }
+    },
+    "OriginalTransactionReference": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "$ref": "#/definitions/Amount"
+        },
+        "interbank_settlement_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "purpose": {
+          "$ref": "#/definitions/Purpose"
+        },
+        "payment_type_information": {
+          "$ref": "#/definitions/PaymentTypeInformation"
+        },
+        "debtor": {
+          "$ref": "#/definitions/Debtor"
+        },
+        "debtor_account": {
+          "$ref": "#/definitions/DebtorAccount"
+        },
+        "debtor_agent": {
+          "$ref": "#/definitions/DebtorAgent"
+        },
+        "creditor": {
+          "$ref": "#/definitions/Creditor"
+        },
+        "creditor_account": {
+          "$ref": "#/definitions/CreditorAccount"
+        },
+        "creditor_agent": {
+          "$ref": "#/definitions/CreditorAgent"
+        },
+        "remittance_information": {
+          "$ref": "#/definitions/RemittanceInformation"
+        }
+      }
+    },
+    "TransactionInformationAndStatus": {
+      "type": "object",
+      "properties": {
+        "original_end_to_end_identification": {
+          "type": "string"
+        },
+        "transaction_status": {
+          "type": "string"
+        },
+        "original_transaction_reference": {
+          "$ref": "#/definitions/OriginalTransactionReference"
+        }
+      }
+    },
+    "DeviceInformation": {
+      "type": "object",
+      "properties": {
+        "device_identification": {
+          "type": "string"
+        },
+        "device_age": {
+          "type": "string"
+        },
+        "device_first_seen_date": {
+          "type": "string",
+          "anyOf": [
+            {
+              "format": "date"
+            },
+            {
+              "enum": [
+                ""
+              ]
+            }
+          ],
+          "description": "ISO date or empty string when unavailable."
+        },
+        "does_the_device_have_successful_prior_activity": {
+          "type": "string"
+        },
+        "number_of_accounts_sharing_device": {
+          "type": "string"
+        },
+        "is_the_customers_device_being_remote_accessed": {
+          "type": "string"
+        },
+        "is_there_a_concurrent_session": {
+          "type": "string"
+        }
+      }
+    },
+    "OtherInformation": {
+      "type": "object",
+      "properties": {
+        "typing_cadence": {
+          "type": "string"
+        },
+        "mouse_movement_changes": {
+          "type": "string"
+        },
+        "copy_and_paste_frequency": {
+          "type": "string"
+        },
+        "customer_on_phone_during_transaction": {
+          "type": "string"
+        },
+        "station_terminal_IP": {
+          "type": "string"
+        },
+        "customer_account_balances": {
+          "type": "string"
+        }
+      }
+    },
+    "SupplementaryData": {
+      "type": "object",
+      "properties": {
+        "credit_debit_indicator": {
+          "type": "string"
+        },
+        "sequence_number": {
+          "type": "string"
+        },
+        "customer_cis_id": {
+          "type": "string"
+        },
+        "channel_app_code": {
+          "type": "string"
+        },
+        "product_code": {
+          "type": "string"
+        },
+        "file_number": {
+          "type": "string"
+        },
+        "user_identification": {
+          "type": "string"
+        },
+        "approver_id": {
+          "type": "string"
+        },
+        "device_information": {
+          "$ref": "#/definitions/DeviceInformation"
+        },
+        "other_information": {
+          "$ref": "#/definitions/OtherInformation"
+        },
+        "status_update": {
+          "$ref": "#/definitions/StatusUpdate"
+        },
+        "sco_id": {
+          "type": "string"
+        }
+      }
+    },
+    "StatusUpdate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "payment_status": {
+          "type": "string",
+          "description": "Payment status update produced by FSL. Expected values include AUTO-DECLINE, APPROVE, and REJECT.",
+          "examples": [
+            "AUTO-DECLINE",
+            "APPROVE",
+            "REJECT"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for the payment status update.",
+          "examples": [
+            "Threshold Reached",
+            "Fraud Response"
+          ]
+        }
+      }
+    },
+    "GroupHeader": {
+      "type": "object",
+      "required": [
+        "message_identification",
+        "creation_date_time"
+      ],
+      "properties": {
+        "message_identification": {
+          "type": "string"
+        },
+        "creation_date_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "OriginalGroupInformationAndStatus": {
+      "type": "object",
+      "properties": {
+        "original_message_identification": {
+          "type": "string"
+        },
+        "original_creation_date_time": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "OriginalPaymentInformationAndStatus": {
+      "type": "object",
+      "properties": {
+        "original_number_of_transactions": {
+          "type": "string"
+        },
+        "original_payment_information_identification": {
+          "type": "string"
+        },
+        "transaction_information_and_status": {
+          "$ref": "#/definitions/TransactionInformationAndStatus"
+        }
+      }
+    }
+  },
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_name",
+        "event_action",
+        "country",
+        "source_id",
+        "origination_timestamp"
+      ],
+      "properties": {
+        "event_name": {
+          "type": "string"
+        },
+        "event_action": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "origination_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "payments": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "group_header": {
+          "$ref": "#/definitions/GroupHeader"
+        },
+        "original_group_information_and_status": {
+          "$ref": "#/definitions/OriginalGroupInformationAndStatus"
+        },
+        "original_payment_information_and_status": {
+          "$ref": "#/definitions/OriginalPaymentInformationAndStatus"
+        },
+        "supplementary_data": {
+          "$ref": "#/definitions/SupplementaryData"
+        }
+      }
+    }
+  }
+}
