@@ -1,1 +1,13 @@
+Diagram Objectives
+
+* Enable real-time fraud screening before EFT payments leave the bank.
+* Introduce Kafka-based asynchronous request/response between PHUB and FSL, replacing the fire-and-forget model.
+* Integrate with ACI PRM for real-time fraud decisioning.
+* Support Approve, Decline and Pending outcomes with controlled payment release.
+* Track transaction status and fraud decisions for end-to-end response processing.
+* Return fraud outcomes to PHUB within the 20-minute window, with timeout and fallback handling.
+* Maintain end-to-end event traceability and auditability through the FOD Audit Topic.
+* Scope: One-time EFT payments originating from SCO in Canada.
+
+
 Introduce a new Fraud Service Layer (FSL) microservice to enable real-time fraud screening for EFT payments. The service will consume payment requests from Kafka, integrate with ACI PRM for fraud decisioning, and return fraud outcomes to PHUB before payment submission, with support for transaction tracking, auditability, and timeout handling.
