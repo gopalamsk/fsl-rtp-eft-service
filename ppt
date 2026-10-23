@@ -1,0 +1,80 @@
+For this Architecture Review Board presentation, I would make one fundamental change: replace the list of objectives with a numbered walkthrough of the target architecture.
+
+Your current text describes the capabilities of the solution. That’s useful background, but it makes the panel work harder to connect those capabilities to the arrows and systems in the diagram.
+
+The architect is asking for a narrative that starts with payment initiation, follows the fraud screening process, and ends when PHUB receives the outcome.
+
+What I would put in the diagram objective box
+
+Rename the box:
+
+Target Architecture: End-to-End Processing Flow
+
+Proposed slide content
+
+Copy
+
+* Payment Initiation: SCO submits EFT payments through PHUB, which publishes payment events to the Kafka request topic.
+* Event Processing: FSL consumes EFT events and routes them for real-time or near-real-time fraud screening based on the event type.
+* Fraud Screening: FSL sends eligible payment requests to ACI PRM for fraud assessment and decisioning.
+* Audit and Tracking: FSL records transaction status and publishes audit events to support traceability.
+* Decision Processing: ACI PRM returns Approve, Reject or Pending decisions, which are retained for downstream processing.
+* Pending Review: Pending transactions are managed through PRM’s review and release process, including the notification path.
+* Response and Timeout: FSL returns the fraud outcome to PHUB within the 20-minute window, with auto-approval on timeout according to the agreed business rule.
+* Payment Completion: PHUB consumes the response and proceeds with payment processing based on the fraud decision.
+
+These eight points are enough for the slide. They show how the major components interact while keeping implementation details such as Spring Batch, ShedLock, database queries, and retry mechanisms out of the architecture discussion.
+
+How to explain the diagram during the review
+
+I would use the following as a 60–90-second presentation script. Rather than reading each numbered point, walk the panel through the overall process.
+
+This target architecture introduces real-time fraud screening for SCO Online EFT payments before they leave the bank.
+
+The flow starts with PHUB publishing EFT payment events to Kafka. FSL consumes these events, identifies the appropriate processing path, and integrates with ACI PRM for fraud assessment.
+
+Based on the fraud decision, transactions are approved, rejected, or held for further review. FSL retains the transaction status and decision information to support end-to-end response processing.
+
+The solution operates within a 20-minute response window. If no decision is received within that window, the agreed timeout handling applies, allowing payment processing to continue.
+
+Finally, FSL publishes the outcome back to PHUB, with audit events captured throughout the flow for traceability.
+
+The script gives the board the business purpose, the integration approach, the decision outcomes, and the response commitment without turning the discussion into a code-level design review.
+
+What I would correct before seeking approval
+
+There are three areas where I would tighten the architecture story.
+
+1. Make the sequence match the diagram.
+
+Your drawing contains separate PRM RT and NRT paths, the FOD audit topic, the fraud decision service, and the EFT response topic. The explanation must reflect those distinct paths. In particular, file uploads use near-real-time monitoring, so the slide should not suggest that every EFT event follows the same real-time screening process.
+
+2. Explain the timeout rule precisely.
+
+A PENDING decision and the absence of a decision are not the same condition. The board should understand that the agreed fallback is auto-approval when the 20-minute timeout is reached without a decision.
+
+You should also be ready to answer what happens if PRM delivers a decision after the payment has already been auto-approved. That is an important architecture consideration.
+
+3. Explain the purpose of retained data.
+
+The Azure PFM DB should not appear to be an unexplained storage component. Its architectural role is to retain transaction status and fraud decisions, allowing FSL to correlate responses with their original EFT requests and complete downstream processing.
+
+This is more relevant to the board than the internal mechanism used to retrieve those records.
+
+Where the scope belongs
+
+I would move the scope statement out of the numbered sequence and place it in a small section below the flow description.
+
+Scope: SCO Online EFT single and group payments in Canada, including real-time screening and near-real-time file upload monitoring. Non-SCO EFT is excluded.
+
+This keeps the processing narrative separate from the boundaries of the initiative.
+
+One detail to verify against your diagram
+
+The screenshots appear to show the PRM decision returning through the fraud decision service and PFM DB before FSL sends the result to PHUB.
+
+Confirm that this is the intended path. The wording should not imply that ACI PRM sends its decision directly to FSL if another service actually receives and persists it first.
+
+For the final ARB slide, I would keep the eight numbered steps, ensure their order matches the actual arrows, and use the short presentation script to explain the business outcome.
+
+The approval discussion should focus on four things: how the payment enters the solution, how fraud screening is performed, how decisions are retained and returned, and how the 20-minute timeout is handled. Those are the architectural decisions the panel needs to understand.
